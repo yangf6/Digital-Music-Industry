@@ -1,0 +1,189 @@
+use group3_Draft
+
+CREATE TABLE Mood
+(
+MoodID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+MoodName varchar(50) NOT NULL,
+MoodDescr varchar(200) NULL
+)
+
+CREATE TABLE Studio
+(
+StudioID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+StudioName varchar(50) NOT NULL,
+StudioDescr varchar(200) NULL
+)
+CREATE TABLE Subscription_Type
+(
+SubscriptionTypeID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+SubscriptionTypeName  varchar(50) NOT NULL,
+SubscriptionTypeDescr varchar(200) NULL,
+)
+
+CREATE TABLE Customer
+(
+CustomerID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+CustFname varchar(50) NOT NULL,
+CustLname varchar(50) NOT NULL,
+CustAddress varchar(200) NOT NULL,
+CustCity varchar(50) NOT NULL,
+CustState varchar(50) NOT NULL,
+CustZip int NOT NULL
+)
+
+CREATE TABLE Subscription
+(
+SubscriptionID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+SubscriptionTypeID  int FOREIGN KEY REFERENCES Subscription_Type(SubscriptionTypeID) NOT NULL,
+CustomerID int  FOREIGN KEY REFERENCES Customer(CustomerID) NOT NULL,
+BeginDate date NOT NULL,
+EndDate date NULL
+)
+
+CREATE TABLE Artist
+(
+ArtistID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+ArtistFname varchar(50) NOT NULL,
+ArtistLname varchar(50) NOT NULL
+)
+
+CREATE TABLE Ensemble
+(
+EnsembleID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+EnsembleName varchar(50) NOT NULL,
+EnsembleBeginDate date NOT NULL,
+EnsembleEndDate date NULL
+)
+
+CREATE TABLE Access_Type
+(
+AccessTypeID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+AccessTypeName varchar(50) NOT NULL,
+AccessTypeDescr varchar(200) NULL
+)
+
+CREATE TABLE Song
+(
+SongID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+SongName varchar(50) NOT NULL
+)
+
+CREATE TABLE Genre
+(
+GenreID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+GenreName varchar(50) NOT NULL,
+GenreDescr varchar(200) NULL
+)
+
+CREATE TABLE Recording
+(
+RecordingID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+RecordingName varchar(50) NOT NULL,
+RecordingDate date NOT NULL,
+StudioID int FOREIGN KEY REFERENCES Studio(StudioID) NOT NULL,
+SongID int FOREIGN KEY REFERENCES Song(SongID) NOT NULL,
+MoodID int FOREIGN KEY REFERENCES Mood(MoodID) NOT NULL,
+GenreID int FOREIGN KEY REFERENCES Genre(GenreID) NOT NULL,
+Length int NOT NULL
+)
+
+CREATE TABLE Access
+(
+AccessID int  IDENTITY(1,1) PRIMARY KEY NOT NULL,
+SubscriptionID int FOREIGN KEY REFERENCES Subscription(SubscriptionID) NOT NULL,
+RecordingID int FOREIGN KEY REFERENCES Recording(RecordingID) NOT NULL,
+AccessTypeID int FOREIGN KEY REFERENCES Access_Type(AccessTypeID) NOT NULL, DownloadDate date NOT NULL
+)
+
+CREATE TABLE Ensemble_Artist
+(
+EnsembleArtistID int  IDENTITY(1,1) PRIMARY KEY NOT NULL,
+EnsembleID int FOREIGN KEY REFERENCES Ensemble(EnsembleID) NOT NULL,
+ArtistID int FOREIGN KEY REFERENCES Artist(ArtistID) NOT NULL,
+BeginDate date NOT NULL,
+EndDate date NULL
+)
+
+CREATE TABLE Comment_Type
+(
+CommentTypeID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+CommentTypeName varchar(50) NOT NULL,
+CommentTypeDescr varchar(200) NULL
+)
+
+
+CREATE TABLE Instrument_Type
+(
+InstrumentTypeID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+InstrumentTypeName varchar(50) NOT NULL,
+InstrumentTypeDescr varchar(200) NULL
+)
+
+CREATE TABLE Instrument
+(
+InstrumentID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+InstrumentName varchar(50) NOT NULL,
+InstrumentTypeID int FOREIGN KEY REFERENCES Instrument_Type(InstrumentTypeID) NULL
+)
+
+CREATE TABLE position
+(
+RoleID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+RoleName varchar(50) NOT NULL,
+RoleDescr varchar(200) NULL
+)
+
+CREATE TABLE Artist_Recording
+(
+ArtistRecordingID int  IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+ArtistID int  FOREIGN KEY REFERENCES Artist(ArtistID) NOT NULL,
+RecordingID int  FOREIGN KEY REFERENCES Recording(RecordingID) NOT NULL,
+InstrumentID int  FOREIGN KEY REFERENCES Instrument(InstrumentID) NULL
+)
+
+
+CREATE TABLE Artist_Recording_Role
+(
+ArtistRecordingID int NOT NULL,
+RoleID int NOT NULL,
+CONSTRAINT PK1 PRIMARY KEY (ArtistRecordingID,RoleID),
+CONSTRAINT FK_1 FOREIGN KEY(ArtistRecordingID) REFERENCES Artist_Recording(ArtistRecordingID),
+CONSTRAINT FK_2 FOREIGN KEY(RoleID) REFERENCES  position(RoleID) 
+)
+
+
+CREATE TABLE Label
+(
+LabelID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+LabelName varchar(50) NOT NULL,
+LabelAddress varchar(200) NOT NULL,
+LabelCity varchar(50) NOT NULL,
+LabelState varchar(50) NOT NULL,
+LabelZip int NOT NULL
+)
+
+CREATE TABLE Album
+(
+AlbumID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+AlbumName varchar(50) NOT NULL,
+ReleaseDate date NOT NULL,
+LabelD int FOREIGN KEY REFERENCES Label(LabelID) NULL
+)
+
+CREATE TABLE Album_Recording
+(
+AlbumRecordingID int IDENTITY(1,1) PRIMARY KEY NOT NULL,
+AlbumID int FOREIGN KEY REFERENCES Album(AlbumID) NOT NULL,
+RecordingID int FOREIGN KEY REFERENCES Recording(RecordingID) NOT NULL,
+Sequence varchar(50) NOT NULL,
+ReleaseDate date NOT NULL
+)
+
+
+CREATE TABLE Comment
+(
+CommentID int IDENTITY(1, 1) PRIMARY KEY NOT NULL,
+CommentBody varchar(200) NOT NULL,
+ArtistRecordingID int FOREIGN KEY REFERENCES Artist_Recording(ArtistRecordingID) NOT NULL,
+CommentTypeID int  FOREIGN KEY REFERENCES Comment_Type(CommentTypeID) NULL
+)
